@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="x-apple-disable-message-reformatting" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="supported-color-schemes" content="dark" />
+    <title>Task Reminder — Due Tomorrow</title>
+    <style>
+      /* Reset */
+      body, table, td, p, a, h1, h2, h3 { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
+      table, td { mso-table-lspace: 0pt; mso-table-rspace: 0pt; border-collapse: collapse; }
+      img { -ms-interpolation-mode: bicubic; border: 0; outline: none; text-decoration: none; display: block; }
+      body { margin: 0 !important; padding: 0 !important; width: 100% !important; background-color: #0a0d14; }
+
+      /* Base */
+      .wrapper { width: 100%; background-color: #0a0d14; background-image: radial-gradient(ellipse 80% 60% at 50% -10%, rgba(51, 153, 255, 0.18), transparent 70%); padding: 40px 16px; }
+      .container { max-width: 600px; margin: 0 auto; background-color: #11151f; border: 1px solid #232936; border-radius: 16px; overflow: hidden; }
+      .px { padding-left: 40px; padding-right: 40px; }
+
+      /* Typography */
+      .font-heading { font-family: 'Space Grotesk', 'Segoe UI', Helvetica, Arial, sans-serif; }
+      .font-body { font-family: 'Inter', 'Segoe UI', Helvetica, Arial, sans-serif; }
+      h1 { color: #f1f5fb; font-size: 28px; line-height: 1.2; font-weight: 700; margin: 0 0 12px; letter-spacing: -0.02em; }
+      h2 { color: #f1f5fb; font-size: 18px; line-height: 1.3; font-weight: 600; margin: 0 0 8px; }
+      p  { color: #97a1b3; font-size: 15px; line-height: 1.65; margin: 0 0 16px; }
+      .muted { color: #6b7588; font-size: 13px; line-height: 1.6; }
+
+      /* Hero */
+      .hero { background: linear-gradient(135deg, rgba(51, 153, 255, 0.18), rgba(51, 217, 204, 0.12)); padding: 48px 40px; text-align: center; border-bottom: 1px solid #232936; }
+      .logo-pill { display: inline-block; padding: 8px 16px; border-radius: 999px; background: rgba(51, 153, 255, 0.12); border: 1px solid rgba(51, 153, 255, 0.3); color: #66b3ff; font-family: 'Space Grotesk', Helvetica, Arial, sans-serif; font-size: 13px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 20px; }
+      .gradient-text { background: linear-gradient(135deg, #3399ff, #33d9cc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; color: #3399ff; }
+
+      /* Reminder Badge */
+      .reminder-badge { display: inline-block; padding: 6px 14px; border-radius: 999px; background: rgba(255, 179, 71, 0.12); border: 1px solid rgba(255, 179, 71, 0.3); color: #ffb347; font-family: 'Space Grotesk', Helvetica, Arial, sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; margin-bottom: 16px; }
+
+      /* Task Card */
+      .task-card { padding: 24px; background-color: #161b27; border: 1px solid #232936; border-radius: 12px; }
+      .task-label { color: #6b7588; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; margin: 0 0 6px; }
+      .task-value { color: #f1f5fb; font-size: 16px; font-weight: 600; margin: 0 0 16px; }
+      .task-value:last-child { margin-bottom: 0; }
+
+      /* Priority Chips */
+      .priority-chip { display: inline-block; padding: 4px 12px; border-radius: 999px; font-size: 12px; font-weight: 600; letter-spacing: 0.02em; text-transform: capitalize; }
+      .priority-low    { background: rgba(51, 217, 204, 0.15); color: #33d9cc; border: 1px solid rgba(51, 217, 204, 0.25); }
+      .priority-medium { background: rgba(255, 179, 71, 0.15);  color: #ffb347; border: 1px solid rgba(255, 179, 71, 0.25); }
+      .priority-high   { background: rgba(255, 107, 107, 0.15); color: #ff6b6b; border: 1px solid rgba(255, 107, 107, 0.25); }
+
+      /* Tip Box */
+      .tip-box { background: linear-gradient(135deg, rgba(51,153,255,0.08), rgba(51,217,204,0.05)); border:1px solid #232936; border-radius:12px; padding: 20px 24px; }
+
+      /* Footer */
+      .footer { padding: 32px 40px; text-align: center; border-top: 1px solid #232936; background-color: #0d1119; }
+
+      /* Mobile */
+      @media only screen and (max-width: 480px) {
+        .wrapper { padding: 16px 8px !important; }
+        .px, .hero, .footer { padding-left: 24px !important; padding-right: 24px !important; }
+        .hero { padding-top: 36px !important; padding-bottom: 36px !important; }
+        h1 { font-size: 24px !important; }
+        .task-card { padding: 20px !important; }
+      }
+    </style>
+  </head>
+  <body class="font-body">
+    <span style="display:none !important; visibility:hidden; opacity:0; height:0; width:0; overflow:hidden; mso-hide:all;">
+      Reminder: "<%= taskTitle %>" is due tomorrow — <%= dueDate %>.
+    </span>
+
+    <table role="presentation" class="wrapper" width="100%" cellpadding="0" cellspacing="0">
+      <tr>
+        <td align="center">
+          <table role="presentation" class="container" width="600" cellpadding="0" cellspacing="0">
+
+            <!-- Hero -->
+            <tr>
+              <td class="hero">
+                <div class="logo-pill">✦ Taskflow</div>
+                <div class="reminder-badge">⏰ Due Tomorrow</div>
+                <h1 class="font-heading">Hey <span class="gradient-text"><%= name %></span>, your task is almost due</h1>
+                <p style="color:#aab4c5; font-size:16px; margin:0;">
+                  Here's a friendly nudge so nothing slips through the cracks.
+                </p>
+              </td>
+            </tr>
+
+            <!-- Intro -->
+            <tr>
+              <td class="px" style="padding-top: 36px; padding-bottom: 8px;">
+                <h2 class="font-heading">Task Overview</h2>
+                <p>
+                  One of your tasks is due tomorrow. Take a moment to review it and plan your next step.
+                </p>
+              </td>
+            </tr>
+
+            <!-- Task Card -->
+            <tr>
+              <td class="px" style="padding-top: 8px; padding-bottom: 24px;">
+                <div class="task-card">
+                  <p class="task-label">Task</p>
+                  <p class="task-value"><%= taskTitle %></p>
+
+                  <p class="task-label">Due Date</p>
+                  <p class="task-value" style="color: #ffb347;"><%= dueDate %></p>
+
+                  <p class="task-label">Priority</p>
+                  <p class="task-value">
+                    <span class="priority-chip priority-<%= priority.toLowerCase() %>"><%= priority %></span>
+                  </p>
+
+                  <% if (description && description.trim().length > 0) { %>
+                    <p class="task-label">Description</p>
+                    <p class="task-value" style="font-weight: 400; color: #97a1b3; font-size: 14px; line-height: 1.6;"><%= description %></p>
+                  <% } %>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Motivation -->
+            <tr>
+              <td class="px" style="padding-top: 8px; padding-bottom: 36px;">
+                <div class="tip-box">
+                  <p style="color:#66b3ff; font-size:12px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; margin:0 0 8px;">Stay on track</p>
+                  <p style="color:#cdd5e2; font-size:14px; margin:0;">
+                    Small steps lead to big wins. Tackling this task now will keep your momentum going and your mind clear.
+                  </p>
+                </div>
+              </td>
+            </tr>
+
+            <!-- Footer -->
+            <tr>
+              <td class="footer">
+                <p style="color:#f1f5fb; font-family:'Space Grotesk', Helvetica, Arial, sans-serif; font-weight:700; font-size:15px; margin:0 0 6px;">✦ Taskflow</p>
+                <p class="muted" style="margin:0 0 4px;">Clarity, focus, and getting things done.</p>
+                <p class="muted" style="margin:12px 0 0;">© <%= new Date().getFullYear() %> Taskflow. All rights reserved.</p>
+              </td>
+            </tr>
+
+          </table>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>
