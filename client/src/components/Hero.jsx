@@ -34,23 +34,15 @@ export const Hero = forwardRef((props, ref) => {
       <ScrollReveal once={false}>
         <Stack
           direction={"column"}
-          spacing={4}
+          spacing={{sm:1,md:4}}
           sx={{ alignItems: "center", textAlign: "center", flex: 1 }}
         >
-          {/* <Chip label={
-        <Typography
-        sx={{
-          fontSize: 14, fontWeight: 500, color: "#0f172a", pr: 1
-        }}
-        >Organize Your Life</Typography>
-      } variant="outlined" /> */}
-
           <Typography
             component="h1"
             sx={{
               fontWeight: 600,
               fontSize: { xs: 22, sm: 34, md: "68px" },
-              lineHeight: "91.2px",
+              lineHeight: {sm:"52px",md:"91.2px"},
               letterSpacing: "-1.9px",
               color: "rgb(0,0,0)",
               maxWidth: 1100,

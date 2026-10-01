@@ -1,5 +1,5 @@
 const User = require("../../models/user");
-const Task = require("../../models/task");
+
 const sendEmail = require("../../utils/sendEmail");
 const postUser = async (req, res) => {
   const data = req?.body;
@@ -16,7 +16,7 @@ const postUser = async (req, res) => {
   const user = new User(data);
   const result = await user.save();
   const token = await result.generateAuthToken();
-  const taskData = await Task.find({ userId: result?._id, isDeleted: false });
+
 
   res.cookie("token", token, {
     httpOnly: true,
@@ -28,7 +28,8 @@ const postUser = async (req, res) => {
   await sendEmail({
     name: req?.body?.name,
     to: req?.body?.email,
-    subject: "Welcome Back!",
+    subject: "Welcome to the family!",
+    purpose:"signUp"
   });
   return res.status(201).json({
      message:"Account Created Successfully, You can login into your account"

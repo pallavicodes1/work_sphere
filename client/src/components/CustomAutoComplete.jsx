@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { Autocomplete, TextField, CircularProgress } from "@mui/material";
 import axios from "axios";
-import useAuth from "../../auth";
+import useAuth from "../auth";
 import { Controller } from "react-hook-form";
+import { useParams } from "react-router-dom";
 
 const fieldSx = {
   "& .MuiOutlinedInput-root": {
@@ -36,18 +37,16 @@ function useDebounce(value, delay) {
 }
 
 export default function CustomAutoComplete({
-  onMemberSelect,
-  register,
   control,
-  errors,
+  taskAssignment
 }) {
   const [open, setOpen] = useState(false);
   const [options, setOptions] = useState([]);
   const [inputValue, setInputValue] = useState("");
   const [loading, setLoading] = useState(false);
-
   const debouncedSearchTerm = useDebounce(inputValue, 300);
   const { request } = useAuth();
+  const {projectId}=useParams();
   useEffect(() => {
     let active = true;
     if (debouncedSearchTerm.length < 2) {
@@ -55,7 +54,26 @@ export default function CustomAutoComplete({
       return undefined;
     }
     setLoading(true);
-    request
+    if(taskAssignment){
+        request.get(`/project/${projectId}/member`,{
+        params:{
+          input:debouncedSearchTerm
+        }
+      })
+      .then((response)=>{
+         if (active) {
+          
+          console.log(response.data.members)
+          setOptions(response?.data?.members);
+        }
+      }) .catch((error) => {
+        console.error("Error fetching users:", error);
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      })
+    }else{
+      request
       .get(`/user/?input=${debouncedSearchTerm}`)
       .then((response) => {
         if (active) {
@@ -67,12 +85,13 @@ export default function CustomAutoComplete({
       })
       .finally(() => {
         if (active) setLoading(false);
-      });
-
+      })
+    }
     return () => {
       active = false;
     };
   }, [debouncedSearchTerm]);
+
 
   // Clear options when dropdown closes
   useEffect(() => {

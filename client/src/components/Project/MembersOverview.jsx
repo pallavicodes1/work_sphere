@@ -1,26 +1,18 @@
-import React, { useState } from "react";
+
 import {
   Box,
   Typography,
   Card,
   CardContent,
   Avatar,
-  TextField,
   Stack,
   Button,
   CardHeader,
-  IconButton,
 } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { useForm } from "react-hook-form";
-import * as Yup from "yup";
-import { useDispatch, useSelector } from "react-redux";
+
+import { useDispatch } from "react-redux";
 import { useSnackbar } from "notistack";
 import useAuth from "../../auth";
-import { userLogin } from "../../app/user/userSlice";
-import MembersDialog from "./MembersDialog";
-import RemoveCircleIcon from "@mui/icons-material/RemoveCircleOutlineOutlined";
 
 const fieldSx = {
   "& .MuiOutlinedInput-root": {
@@ -88,7 +80,6 @@ export default function MembersOverview({ members, handleChange }) {
         elevation={0}
       >
         <CardHeader
-         
           title={
             <>
               <Stack
@@ -129,7 +120,7 @@ export default function MembersOverview({ members, handleChange }) {
         <CardContent>
           <Stack spacing={2}>
             {" "}
-            {members?.slice(0, 4)?.map((member, index) => {
+            {members?.slice(0, 4)?.map((member) => {
               return (
                 <>
                   <Box

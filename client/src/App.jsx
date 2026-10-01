@@ -18,10 +18,11 @@ import ProjectDetails from "./components/Project/ProjectDetails";
 import LoginRegister from "./Pages/LoginRegister";
 import useAuth from "./auth";
 import { useDispatch } from "react-redux";
-import {  userLogout } from "./app/user/userSlice";
 import { removeUserTask } from "./app/user/taskSlice";
 import { removeOProjects } from "./app/user/projectSlice";
 import { removeCurrentProject } from "./app/user/currentProjectSlice";
+import { userLogout } from "./App/user/userSlice";
+import QuickAdd from "./components/QuickAdd";
 function App() {
   const [collapse, setCollapse] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);

@@ -1,11 +1,10 @@
-// utils/sendEmail.js
-
 const nodemailer = require("nodemailer");
 const ejs = require("ejs");
 const path = require("path");
-const sendEmail = async ({name, to, subject,email,html}) => {
+const sendEmail = async ({name, to, subject,email,html,purpose}) => {
+  console.log(name, to, subject,email,html)
   try {
-    if(name){
+    if(purpose==="signUp"){
              const html = await ejs.renderFile(path.join(__dirname, "../../views/welcome.ejs"), {
       name,
     });
@@ -44,7 +43,7 @@ const sendEmail = async ({name, to, subject,email,html}) => {
     }
  
   } catch (err) {
-    // console.log(err);
+    console.log(err);
   }
 };
 

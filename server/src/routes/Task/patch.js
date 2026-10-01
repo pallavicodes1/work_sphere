@@ -4,17 +4,22 @@ const User=require('../../models/user');
 const patch = async (req, res) => {
     try {
         const id = req?.params?.id;
+         console.log(req.body);
         const data = await Task.findByIdAndUpdate(id, {
             $set: req?.body
-        }, { new: true });
+        }, { new: true }).select("title description date priority status assignedTo project")
+        .populate("assignedTo","name email");
        
-        if (data.project) {        
+        console.log(data)
+        if (data.project) {    
+             
             await createActivity({
                 projectId: data.project,
                 userId: req?.user?._id,
                 type: "TASK_UPDATED",
                 message: `updated task "${data.title}"`,
                 taskId: data._id,
+                
             })
         }
 

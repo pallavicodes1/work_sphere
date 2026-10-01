@@ -15,7 +15,7 @@ const getTasks = async function (req, res) {
         const projectObjectId = new mongoose.Types.ObjectId(projectId);
         const {
             page = 1,
-            limit = 6,
+            limit = 7,
             search = "",
         } = req.query;
 
@@ -23,22 +23,26 @@ const getTasks = async function (req, res) {
         const limitNumber = Number(limit);
         const skip = (pageNumber - 1) * limitNumber;
 
-
-        // Sorting
-
-        const userRoleInProject = await ProjectMember.findOne({
-            userId: req.user._id,
-            projectId: projectObjectId,
-            isDeleted: false
-        })
+        // const userRoleInProject = await ProjectMember.findOne({
+        //     userId: req.user._id,
+        //     projectId: projectObjectId,
+        //     isDeleted: false
+        // })
 
         const tasks = await Task.find({
-            project: projectObjectId, isDeleted: false,
+            project: projectObjectId, 
+            isDeleted: false,
+            
             title: {
                 $regex: search.trim(),
                 $options: "i"
             }
-        }).skip(skip)
+        }).select("title priority description date status assignedTo")
+            .populate({
+                path: "assignedTo",
+                select: "name email"
+            })
+            .skip(skip)
             .limit(limitNumber)
             .lean();
         // Total matching documents
@@ -49,12 +53,15 @@ const getTasks = async function (req, res) {
                 $options: "i"
             }
         });
-
         const totalPages = Math.ceil(total / limitNumber);
 
+        const members = await ProjectMember.find({ projectId: projectObjectId })
+        .populate('userId', 'name email')
+        .select("userId");
         return res.status(200).json({
             success: true,
             tasks,
+            members,
             pagination: {
                 page: pageNumber,
                 limit: limitNumber,

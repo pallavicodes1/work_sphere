@@ -19,12 +19,30 @@ import { useDispatch } from "react-redux";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutlineRounded";
 import DeleteOutlineOutlined from "@mui/icons-material/DeleteOutlineOutlined";
 import useAuth from "../../auth";
-import { useEffect, useState } from "react";
+import FlagOutlinedIcon from "@mui/icons-material/FlagOutlined";
+import { useState } from "react";
 import EditOutlined from "@mui/icons-material/EditOutlined";
 import AlertDialog from "../AlertDialog";
 import TaskDialog from "./TaskDialog";
+import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
 
-const TaskList = ({ tasks, today }) => {
+
+const priorityStyles = {
+  low: { bgcolor: "hsla(175, 80%, 50%, 0.2)", color: "hsl(175, 80%, 50%)" },
+  medium: {
+    bgcolor: "hsla(45, 100%, 50%, 0.2)",
+    color: "hsl(45, 100%, 60%)",
+  },
+  high: { bgcolor: "hsla(0, 84%, 60%, 0.2)", color: "hsl(0, 84%, 60%)" },
+};
+const formatDate = (date) => {
+  return new Date(date).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  });
+};
+const TaskList = ({ tasks }) => {
   const [openDelete, setOpenDelete] = useState(false);
   const [openEdit, setOpenEdit] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
@@ -44,7 +62,8 @@ const TaskList = ({ tasks, today }) => {
 
   return (
     <>
-      {tasks?.length === 0 ? (
+
+     {tasks?.length === 0 ? (
         <Paper
           variant="outlined"
           sx={{
@@ -93,7 +112,7 @@ const TaskList = ({ tasks, today }) => {
           </Stack>
         </Paper>
       ) : null}
-      <Stack direction={"column"} spacing={2.5} sx={{ mt: 1 }}>
+      {/* <Stack direction={"column"} spacing={2.5} sx={{ mt: 1 }}>
         {tasks.map((task) => {
           const isOverdue = today ? task.date < today : false;
           return (
@@ -229,8 +248,127 @@ const TaskList = ({ tasks, today }) => {
             </Card>
           );
         })}
-      </Stack>
+      </Stack> */}
 
+
+        <Box
+              sx={{ display: "flex", flexDirection: "row", gap: 2, flexWrap: "wrap" }}
+            >
+              {tasks?.map((task) => (
+                <Card
+                  key={task?._id}
+                  sx={{
+                    width: 350,
+                    borderRadius: "14px",
+                    border: "1px solid #e5e7eb",
+                    boxShadow: "none",
+                  }}
+                >
+                  <CardContent>
+                    {/* Project name */}
+                    <Stack direction={"column"} spacing={1.25}>
+                      <Stack>
+                        <Stack
+                          direction={"row"}
+                          sx={{
+                            alignItems: "center",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          {" "}
+                          <Typography
+                            sx={{
+                              fontWeight: 600,
+                              // color: projectTitleColors[index % projectTitleColors.length],
+                              fontSize: "16px",
+                              fontFamily:
+                                "Inter, system-ui, -apple-system, sans-serif",
+                              textTransform: "capitalize",
+                            }}
+                          >
+                            {task.title}
+                          </Typography>
+                          {/* {role !== "viewer" && ( */}
+                            <Box>
+                              <Tooltip title="Edit task">
+                                <IconButton
+                                  size="small"
+                                  sx={{ color: "rgba(0, 0, 0, 0.6)" }}
+                                  onClick={() => {
+                                    handleEditTask(task);
+                                  }}
+                                >
+                                  <EditOutlined fontSize="16px" />
+                                </IconButton>
+                              </Tooltip>
+                              <Tooltip title="Delete task">
+                                <IconButton
+                                  size="small"
+                                  sx={{ color: "rgba(0, 0, 0, 0.6)" }}
+                                  onClick={() => {
+                                    setTaskToDelete(task._id);
+                                    setOpenDelete(true);
+                                  }}
+                                >
+                                  <DeleteOutlineOutlined fontSize="16px" />
+                                </IconButton>
+                              </Tooltip>
+                            </Box>
+                          {/* )} */}
+                        </Stack>
+                        <Typography
+                          color="text.secondary"
+                          sx={{
+                            fontSize: "14px",
+                            fontFamily: "Inter, system-ui, -apple-system, sans-serif",
+                          }}
+                        >
+                          {task.description.slice(0, 30)}....
+                        </Typography>
+                      </Stack>
+      
+                      <Chip
+                        icon={<FlagOutlinedIcon />}
+                        label={task.priority}
+                        size="small"
+                        sx={{
+                          px: 1,
+                          py: 2,
+                          alignSelf: "flex-start",
+                          textTransform: "capitalize",
+                          fontWeight: 500,
+                          fontFamily: "Inter, system-ui, -apple-system, sans-serif",
+                          ...priorityStyles[task.priority],
+                          "& .MuiChip-icon": {
+                            color: "inherit",
+                            fontSize: "14px ",
+                          },
+                        }}
+                      />
+      
+                      <Stack
+                        spacing={0.5}
+                        direction={"row"}
+                        sx={{ alignItems: "center" }}
+                      >
+                        <CalendarTodayOutlinedIcon
+                          sx={{ fontSize: "13px", color: "#475569" }}
+                        />
+                        <Typography
+                          sx={{
+                            color: "#475569",
+                            fontSize: "14px",
+                            fontFamily: "Inter, system-ui, -apple-system, sans-serif",
+                          }}
+                        >
+                          {formatDate(task.date)}
+                        </Typography>
+                      </Stack>
+                    </Stack>
+                  </CardContent>
+                </Card>
+              ))}
+            </Box>
       <TaskDialog
         open={openEdit}
         onClose={() => setOpenEdit(false)}

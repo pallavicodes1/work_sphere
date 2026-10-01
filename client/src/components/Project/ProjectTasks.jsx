@@ -1,47 +1,38 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect,  useState } from "react";
 import {
   Box,
   Stack,
   Typography,
   IconButton,
-  Button,
   TextField,
   InputAdornment,
-  Avatar,
   Paper,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
   Tooltip,
   Card,
   Chip,
   CardContent,
   Pagination,
+  Divider,
 } from "@mui/material";
-import AddIcon from "@mui/icons-material/Add";
+import AutoAwesomeIcon from "@mui/icons-material/AutoAwesome";
+import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
 import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
 import FlagOutlinedIcon from "@mui/icons-material/FlagOutlined";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutlineRounded";
 import DeleteOutlineOutlined from "@mui/icons-material/DeleteOutlineOutlined";
 import EditOutlined from "@mui/icons-material/EditOutlined";
-import ArrowBackIcon from "@mui/icons-material/ArrowBackIosNew";
-import LightbulbOutlinedIcon from "@mui/icons-material/LightbulbOutlined";
-import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import SearchIcon from "@mui/icons-material/Search";
-import TuneIcon from "@mui/icons-material/TuneRounded";
-import FolderOutlinedIcon from "@mui/icons-material/FolderOutlined";
-import SortIcon from "@mui/icons-material/SortRounded";
-import TaskDialog from "../Tasks/TaskDialog";
 import { useSelector } from "react-redux";
-import ArrowUp from "@mui/icons-material/ArrowUpward";
-import ArrowDown from "@mui/icons-material/ArrowDownward";
-import ArrowUpDown from "@mui/icons-material/UnfoldMore";
 import AddPTask from "./AddPTask";
 import useAuth from "../../auth";
 import AlertDialog from "../AlertDialog";
 import { useParams } from "react-router-dom";
+import AddIcon from "@mui/icons-material/Add"
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
+import CreateTaskWithAI from "../Project/CreateTaskWithAI";
 
 const priorityStyles = {
   low: { bgcolor: "hsla(175, 80%, 50%, 0.2)", color: "hsl(175, 80%, 50%)" },
@@ -62,19 +53,39 @@ export default function ProjectTasks() {
   const [open, setOpen] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState(null);
-  const [role, setRole] = useState(null);
   const [tasks, setTasks] = useState([]);
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [anchorEl, setAnchorEl] = useState(null);
   const [totalPages, setTotalPages] = useState(0);
   const [selectedTask, setSelectedTask] = useState(null);
-  const today = new Date().toISOString().split("T")[0];
+  const [members, setMembers] = useState([]);
+  const [taskAI, setTaskAI] = useState(false);
+  const openMenu = Boolean(anchorEl);
   const handleAddTask = () => {
     setSelectedTask(null);
     setOpen(true);
   };
+
+  const handleAddTaskAI = () => {
+    setTaskAI(true);
+  };
+
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
   const { request } = useAuth();
   const { projectId } = useParams();
+
+  const role = useSelector(
+    (state) => state.currentProjectReducer.currentUserRole,
+  );
+  console.log(role);
   useEffect(() => {
     const getTasks = async () => {
       try {
@@ -88,16 +99,16 @@ export default function ProjectTasks() {
         if (result.status === 200) {
           setTasks(result.data.tasks);
           setTotalPages(result.data.pagination.totalPages);
-          setRole(result?.data?.role);
+          setMembers(result.data.members);
         }
-      } catch (error) {}
+      } catch (error) {
+      } finally {
+        // setLoading(false)
+      }
     };
     getTasks();
   }, [search, page]);
 
-  useEffect(()=>{
-      console.log('its magic its magic');
-  },[])
   const handleEditTask = (t) => {
     console.log("called");
     setSelectedTask(t);
@@ -116,31 +127,148 @@ export default function ProjectTasks() {
         }}
       >
         {role !== "viewer" && (
-          <Button
-            disableElevation
-            variant="contained"
-            onClick={() => {
-              handleAddTask();
-            }}
-            startIcon={<AddIcon />}
-            sx={{
-              bgcolor: "#0f172a",
-              color: "#fff",
-              textTransform: "none",
-              fontWeight: 600,
-              fontSize: "13px",
-              letterSpacing: "1px",
-              borderRadius: "10px",
-              py: 1.2,
-              "&:hover": { bgcolor: "#1e293b" },
-              fontFamily: "Inter, system-ui, -apple-system, sans-serif",
-            }}
-          >
-            New Task
-          </Button>
-        )}
+          <>
+            {/* <Button
+              disableElevation
+              variant="contained"
+              onClick={() => {
+                handleAddTask();
+              }}
+              startIcon={<AddIcon />}
+              sx={{
+                bgcolor: "#0f172a",
+                color: "#fff",
+                textTransform: "none",
+                fontWeight: 600,
+                fontSize: "13px",
+                letterSpacing: "1px",
+                borderRadius: "10px",
+                py: 1.2,
+                "&:hover": { bgcolor: "#1e293b" },
+                fontFamily: "Inter, system-ui, -apple-system, sans-serif",
+              }}
+            >
+              New Task
+            </Button> */}
+            <Stack
+              component="button"
+              onClick={handleClick}
+              direction="row"
+              spacing={1}
+              sx={{
+                alignItems: "center",
+                border: "1px solid #e5e7eb",
+                borderRadius: "8px",
+                bgcolor: "white",
+                py: 1,
+                cursor: "pointer",
+              }}
+            >
+              <AddIcon sx={{ fontSize: "16px" }} />
+              <Typography
+                sx={{
+                  color: "#0f172a",
+                  textTransform: "none",
+                  fontWeight: 600,
+                  fontSize: "13px",
+                  letterSpacing: "1px",
+                  fontFamily: "Inter, system-ui, -apple-system, sans-serif",
+                }}
+              >
+                New Task
+              </Typography>
 
-        {role === "viewer" && <></>}
+              {openMenu ? (
+                <KeyboardArrowUpIcon
+                  sx={{ fontSize: "16px", color: "#475569" }}
+                />
+              ) : (
+                <KeyboardArrowDownIcon
+                  sx={{ fontSize: "16px", color: "#475569" }}
+                />
+              )}
+            </Stack>
+            <Menu
+              anchorEl={anchorEl}
+              id="account-menu"
+              open={openMenu}
+              onClose={handleClose}
+              onClick={handleClose}
+              slotProps={{
+                paper: {
+                  elevation: 0,
+                  sx: {
+                    overflow: "visible",
+                    filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+                    mt: 1.5,
+                    width: 160,
+                    borderRadius: 1,
+                    "& .MuiAvatar-root": {
+                      width: 32,
+                      height: 32,
+                      ml: -0.5,
+                      mr: 1,
+                    },
+                    "&::before": {
+                      content: '""',
+                      display: "block",
+                      position: "absolute",
+                      top: 0,
+                      right: 14,
+                      width: 10,
+                      height: 10,
+                      bgcolor: "background.paper",
+                      transform: "translateY(-50%) rotate(45deg)",
+                      zIndex: 0,
+                    },
+                  },
+                },
+              }}
+              transformOrigin={{ horizontal: "right", vertical: "top" }}
+              anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+            >
+              <MenuItem onClick={handleAddTask}>
+                <Stack
+                  direction={"row"}
+                  spacing={1}
+                  sx={{ alignItems: "center" }}
+                >
+                  <EditOutlinedIcon
+                    sx={{ fontSize: "18px", color: "rgba(0, 0, 0, 0.54)" }}
+                  />
+                  <Typography
+                    sx={{
+                      fontFamily: "Inter, system-ui, -apple-system, sans-serif",
+                      fontSize: "14px",
+                    }}
+                  >
+                    Create manually
+                  </Typography>{" "}
+                </Stack>
+              </MenuItem>
+              <Divider />
+              <MenuItem onClick={handleAddTaskAI}>
+                <Stack
+                  direction={"row"}
+                  spacing={1}
+                  sx={{ alignItems: "center" }}
+                >
+                  <AutoAwesomeIcon
+                    sx={{ fontSize: "18px", color: "rgba(0, 0, 0, 0.54)" }}
+                  />
+                  <Typography
+                    sx={{
+                      fontFamily: "Inter, system-ui, -apple-system, sans-serif",
+                      fontSize: "14px",
+                    }}
+                  >
+                    Create with AI
+                  </Typography>{" "}
+                </Stack>
+              </MenuItem>
+            </Menu>
+          </>
+        )}
         <Stack
           direction={{ xs: "column", sm: "row" }}
           spacing={1.5}
@@ -245,59 +373,64 @@ export default function ProjectTasks() {
               {/* Project name */}
               <Stack direction={"column"} spacing={1.25}>
                 <Stack>
-                    <Stack
-                  direction={"row"}
-                  sx={{ alignItems: "center", justifyContent: "space-between" }}
-                >
-                  {" "}
-                  <Typography
+                  <Stack
+                    direction={"row"}
                     sx={{
-                      fontWeight: 600,
-                      // color: projectTitleColors[index % projectTitleColors.length],
-                      fontSize: "16px",
-                      fontFamily: "Inter, system-ui, -apple-system, sans-serif",
-                      textTransform: "capitalize",
+                      alignItems: "center",
+                      justifyContent: "space-between",
                     }}
                   >
-                    {task.title}
+                    {" "}
+                    <Typography
+                      sx={{
+                        fontWeight: 600,
+                        // color: projectTitleColors[index % projectTitleColors.length],
+                        fontSize: "16px",
+                        fontFamily:
+                          "Inter, system-ui, -apple-system, sans-serif",
+                        textTransform: "capitalize",
+                      }}
+                    >
+                      {task.title}
+                    </Typography>
+                    {role !== "viewer" && (
+                      <Box>
+                        <Tooltip title="Edit task">
+                          <IconButton
+                            size="small"
+                            sx={{ color: "rgba(0, 0, 0, 0.6)" }}
+                            onClick={() => {
+                              handleEditTask(task);
+                            }}
+                          >
+                            <EditOutlined fontSize="16px" />
+                          </IconButton>
+                        </Tooltip>
+                        <Tooltip title="Delete task">
+                          <IconButton
+                            size="small"
+                            sx={{ color: "rgba(0, 0, 0, 0.6)" }}
+                            onClick={() => {
+                              setTaskToDelete(task._id);
+                              setOpenDelete(true);
+                            }}
+                          >
+                            <DeleteOutlineOutlined fontSize="16px" />
+                          </IconButton>
+                        </Tooltip>
+                      </Box>
+                    )}
+                  </Stack>
+                  <Typography
+                    color="text.secondary"
+                    sx={{
+                      fontSize: "14px",
+                      fontFamily: "Inter, system-ui, -apple-system, sans-serif",
+                    }}
+                  >
+                    {task.description.slice(0, 30)}....
                   </Typography>
-                  <Box>
-                    <Tooltip title="Edit task">
-                      <IconButton
-                        size="small"
-                        sx={{ color: "rgba(0, 0, 0, 0.6)" }}
-                        onClick={() => {
-                          handleEditTask(task);
-                        }}
-                      >
-                        <EditOutlined fontSize="16px" />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Delete task">
-                      <IconButton
-                        size="small"
-                        sx={{ color: "rgba(0, 0, 0, 0.6)" }}
-                        onClick={() => {
-                          setTaskToDelete(task._id);
-                          setOpenDelete(true);
-                        }}
-                      >
-                        <DeleteOutlineOutlined fontSize="16px" />
-                      </IconButton>
-                    </Tooltip>
-                  </Box>
                 </Stack>
-                <Typography
-                  color="text.secondary"
-                  sx={{
-                    fontSize: "14px",
-                    fontFamily: "Inter, system-ui, -apple-system, sans-serif",
-                  }}
-                >
-                  {task.description.slice(0, 30)}....
-                </Typography>
-                </Stack>
-              
 
                 <Chip
                   icon={<FlagOutlinedIcon />}
@@ -337,76 +470,26 @@ export default function ProjectTasks() {
                   </Typography>
                 </Stack>
               </Stack>
-              {/* Date + Priority */}
-
-              {/* Members */}
-              {/* <Box
-                sx={{
-                  mt: 2.5,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                }}
-              >
-                <AvatarGroup
-                  max={4}
-                  sx={{
-                    "& .MuiAvatar-root": {
-                      width: 30,
-                      height: 30,
-                      fontSize: 12,
-                      border: "2px solid white",
-                    },
-                  }}
-                >
-                  {project.members.map((member) => (
-                    <Avatar
-                      key={member._id}
-                      src={member.avatar}
-                      alt={member.name}
-                    >
-                      {member.name?.charAt(0).toUpperCase()}
-                    </Avatar>
-                  ))}
-                </AvatarGroup>
-              </Box> */}
-
-              {/* <Button
-                disableElevation
-                disableRipple
-                onClick={() => navigate(`/app/projects/${project._id}`)}
-                sx={{
-                  textTransform: "capitalize",
-                  bgcolor: "white",
-                  color: "#0f172a",
-                  fontFamily: "Inter, system-ui, -apple-system, sans-serif",
-                  fontWeight: 600,
-                  fontSize: "13px",
-                  float: "right",
-                }}
-              >
-                View More
-              </Button> */}
             </CardContent>
           </Card>
         ))}
-       
       </Box>
-       {tasks.length > 0 && (
-          <Pagination
-            count={totalPages}
-            page={page}
-            onChange={(event, value) => setPage(value)}
-            sx={{justifySelf:"center",mt:2}}
-          />
-        )}
+      {tasks.length > 0 && (
+        <Pagination
+          count={totalPages}
+          page={page}
+          onChange={(event, value) => setPage(value)}
+          sx={{ justifySelf: "center", mt: 2 }}
+        />
+      )}
       {/* Empty state */}
 
       <AddPTask
         open={open}
-        onClose={()=>setOpen(false)}
+        onClose={() => setOpen(false)}
         task={selectedTask}
         setTasks={setTasks}
+        members={members}
       />
       <AlertDialog
         data={"task"}
@@ -415,6 +498,11 @@ export default function ProjectTasks() {
         setData={setTasks}
         toDelete={taskToDelete}
         setToDelete={setTaskToDelete}
+      />
+      <CreateTaskWithAI
+       open={taskAI}
+        onClose={() => setTaskAI(false)}
+        setTasks={setTasks}
       />
     </>
   );

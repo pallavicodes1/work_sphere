@@ -1,6 +1,7 @@
 
 const mongoose =require("mongoose");
 const Project = require("../../models/project");
+const ProjectMember = require("../../models/projectmember");
 const getProject = async function(req,res){
       try {
     const projectId = req.params.id;
@@ -26,9 +27,15 @@ const getProject = async function(req,res){
       });
     }
 
+    const currentUserInfo=await ProjectMember.findOne({
+      projectId:projectObjectId,
+      userId:req.user._id
+    }).select("role");
+   
+
     return res.status(200).json({
       project: project[0],
-    
+      userRole:currentUserInfo ? currentUserInfo?.role : null
     });
 
   } catch (error) {

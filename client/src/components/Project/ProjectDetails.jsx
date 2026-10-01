@@ -36,8 +36,9 @@ import useAuth from "../../auth";
 import ProjectSettings from "./ProjectSettings";
 import ProjectOverview from "./ProjectOverview";
 import Memberstab from "./Memberstab";
-import { addCurrentProject } from "../../app/user/currentProjectSlice";
+import { addCurrentProject, addUserProjectRole } from "../../app/user/currentProjectSlice";
 import ActivityTab from "./ActivityTab";
+import AttachmentUploader from "../AttachmentUploader";
 const fieldSx = {
   "& .MuiOutlinedInput-root": {
     borderRadius: "10px",
@@ -127,11 +128,11 @@ const ProjectDetails = () => {
   const user=useSelector((state)=>state.userReducer.user);
   var currentProject;
   const getProject = async () => {
-    console.log('bale bale bale bale')
     const data = await request.get(`/project/${projectId}`);
     if (data?.status === 200) {
           setProject(data?.data?.project);
           dispatch(addCurrentProject(data?.data?.project));
+          dispatch(addUserProjectRole(data?.data?.userRole))
     } 
   };
 
@@ -140,12 +141,14 @@ const ProjectDetails = () => {
   }, [dispatch,projectId]);
 
   return (
-    <Box sx={{ px: { xs: 2, md: 5 }, minHeight: "38vw" }}>
+    <Box sx={{ px: { xs: 2, md: 5 } }}>
       <Card
         sx={{
           mt: 2,
           border: "1px solid rgba(65, 65, 65, 0.18)",
           borderRadius: "12px",
+          minHeight: "36vw", 
+          mb:2
         }}
         elevation={0} >
         <Box sx={{ width: "100%" }}>
@@ -157,6 +160,7 @@ const ProjectDetails = () => {
               <Tab label="Overview" {...a11yProps(0)} sx={tabsx} />
               <Tab label="All Tasks" {...a11yProps(1)} sx={tabsx} />
               <Tab label="Members" {...a11yProps(1)} sx={tabsx} />
+               <Tab label="Attachments" {...a11yProps(1)} sx={tabsx} />
                <Tab label="Recent Activity" {...a11yProps(1)} sx={tabsx} />
            {project?.ownerId?._id === user?._id && <Tab label="Settings" {...a11yProps(1)} sx={tabsx} />}   
             </Tabs>
@@ -171,9 +175,12 @@ const ProjectDetails = () => {
            <Memberstab />
           </CustomTabPanel>
            <CustomTabPanel value={value} index={3}>
-           <ActivityTab />
+           <AttachmentUploader />
           </CustomTabPanel>
            <CustomTabPanel value={value} index={4}>
+           <ActivityTab />
+          </CustomTabPanel>
+           <CustomTabPanel value={value} index={5}>
             <ProjectSettings  />
           </CustomTabPanel>
         </Box>

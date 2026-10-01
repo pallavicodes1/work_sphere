@@ -3,36 +3,22 @@ import {
   Box,
   Stack,
   Typography,
-  IconButton,
   Button,
   TextField,
   InputAdornment,
-  Avatar,
-  Paper,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  Tooltip,
+
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import ArrowBackIcon from "@mui/icons-material/ArrowBackIosNew";
-import LightbulbOutlinedIcon from "@mui/icons-material/LightbulbOutlined";
-import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+
 import SearchIcon from "@mui/icons-material/Search";
-import TuneIcon from "@mui/icons-material/TuneRounded";
-import FolderOutlinedIcon from "@mui/icons-material/FolderOutlined";
-import SortIcon from "@mui/icons-material/SortRounded";
+
 import TaskDialog from "./TaskDialog";
 import { useSelector } from "react-redux";
 import TaskList from "./TaskList";
-import ArrowUp from "@mui/icons-material/ArrowUpward";
-import ArrowDown from "@mui/icons-material/ArrowDownward";
-import ArrowUpDown from "@mui/icons-material/UnfoldMore";
+
 
 function TasksPage() {
-  const [collapsed, setCollapsed] = useState(false);
+ 
   const [task, setTask] = useState(null);
   const [open, setOpen] = useState(false);
   const [sortBy, setSortBy] = useState("date");
@@ -79,6 +65,7 @@ function TasksPage() {
             flexDirection: "row",
             justifyContent: "space-between",
             alignItems: "center",
+            
           }}
         >
           <Stack direction={"column"}>
@@ -128,7 +115,7 @@ function TasksPage() {
           </Button>
         </Box>
 
-        {/* Filters */}
+    
         <Stack
           direction={{ xs: "column", sm: "row" }}
           spacing={1.5}
@@ -136,10 +123,11 @@ function TasksPage() {
             mt: 3,
             alignItems: { sm: "center" },
             justifyContent: "flex-end",
+            mb:2
           }}
         >
           <TextField
-            placeholder="Search tasks..."
+            placeholder="Search tasks by title"
             size="small"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
@@ -163,66 +151,10 @@ function TasksPage() {
               },
             }}
           />
-          <Box
-            sx={{ display: "flex", justifyContent: "space-between", gap: 1.5 }}
-          >
-            <FormControl
-              size="small"
-              sx={{
-                width: {
-                  xs: "100%",
-                  md: "110px",
-                },
-                "& .MuiOutlinedInput-root": {
-                  borderRadius: "10px",
-                  fontSize: "14px",
-                },
-              }}
-            >
-              <InputLabel id="sort-by-label">Sort by</InputLabel>
-              <Select
-                labelId="sort-by-label"
-                value={sortBy}
-                label="Sort by"
-                onChange={(e) => setSortBy(e.target.value)}
-                startAdornment={
-                  <ArrowUpDown />
-                }  
-              >
-                <MenuItem value="date">Date</MenuItem>
-                <MenuItem value="priority">Priority</MenuItem>
-              </Select>
-            </FormControl>
-
-            <Tooltip title={sortDir === "asc" ? "Ascending" : "Descending"}>
-              <IconButton
-                onClick={() =>
-                  setSortDir((d) => (d === "asc" ? "desc" : "asc"))
-                }
-                sx={{
-                  border: "1px solid",
-                  borderColor: "divider",
-                  borderRadius: "10px",
-                  width: 38,
-                  height: 38,
-                  color: "primary.main",
-                  "&:hover": {
-                    borderColor: "primary.main",
-                    backgroundColor: "hsla(210,100%,60%,0.08)",
-                  },
-                }}
-              >
-                {sortDir === "asc" ? (
-                  <ArrowUp />
-                ) : (
-                  <ArrowDown />
-                )}
-              </IconButton>
-            </Tooltip>
-          </Box>
+       
         </Stack>
 
-        {/* Empty state */}
+     
         <TaskList tasks={filteredTasks} today={today} />
       </Box>
       <TaskDialog open={open} onClose={() => setOpen(false)} task={task} />

@@ -9,11 +9,6 @@ import MemberRemove from "@mui/icons-material/PersonRemoveOutlined";
 import DeleteTask from "@mui/icons-material/DeleteOutlined";
 import EditIcon from "@mui/icons-material/Edit";
 import { useSelector } from "react-redux";
-import CheckIcon from "@mui/icons-material/Check";
-import AddIcon from "@mui/icons-material/Add";
-
-import PersonAddIcon from "@mui/icons-material/PersonAdd";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 
 const formatDate = (date) => {
   const formatted = new Date(date).toLocaleString("en-In", {
@@ -39,7 +34,7 @@ export default function ActivityTab() {
       const result = await request.get(`/project/${projectId}/activity`, {
         params: {
           page,
-          limit: 5,
+          limit: 6,
         },
       });
       if (result.status === 200) {
@@ -85,107 +80,117 @@ export default function ActivityTab() {
   return (
     <>
       {!loading ? (
-        <Box>
-          {activity?.map((item, index) => (
-            <Box
-              key={index}
-              sx={{
-                display: "flex",
-                minHeight: 70,
-              }}
-            >
-              {/* Timeline */}
-              <Stack
+        <Box sx={{display:"flex",flexDirection:"column"}}>
+          <Box>
+            {activity?.map((item, index) => (
+              <Box
+                key={index}
                 sx={{
-                  alignItems: "center",
+                  display: "flex",
+                  minHeight: 70,
                 }}
-                direction={"row"}
-                spacing={1}
               >
-                <Box
+                {/* Timeline */}
+                <Stack
                   sx={{
-                    width: 70,
-                    display: "flex",
-                    flexDirection: "column",
                     alignItems: "center",
-                    position: "relative",
                   }}
+                  direction={"row"}
+                  spacing={1}
                 >
-                  {/* Icon */}
                   <Box
                     sx={{
-                      width: 34,
-                      height: 34,
-                      borderRadius: 2,
+                      width: 70,
                       display: "flex",
-                      justifyContent: "center",
+                      flexDirection: "column",
                       alignItems: "center",
-                      backgroundColor: icons[item?.type]?.bg,
+                      position: "relative",
                     }}
                   >
-                    {icons[item?.type]?.icon}
-                  </Box>
-
-                  {/* Vertical line */}
-                  {index !== activity.length - 1 && (
+                    {/* Icon */}
                     <Box
                       sx={{
-                        position: "absolute",
-                        top: 32,
-                        bottom: 0,
-                        width: "2px",
-                        backgroundColor: "#E5E7EB",
+                        width: 34,
+                        height: 34,
+                        borderRadius: 2,
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        backgroundColor: icons[item?.type]?.bg,
                       }}
-                    />
-                  )}
-                </Box>
+                    >
+                      {icons[item?.type]?.icon}
+                    </Box>
 
-                {/* Activity content */}
-                <Stack spacing={0.5}>
-                  <Typography
-                    sx={{
-                      fontFamily: "Inter, system-ui, -apple-system, sans-serif",
-                      fontSize: "15px",
-                    }}
-                  >
-                    <b
-                      style={{
-                        color:
-                          item.userId._id === user._id
-                            ? "rgba(42, 148, 42, 0.78)"
-                            : "rgba(0, 0, 255, 0.69)",
+                    {/* Vertical line */}
+                    {index !== activity.length - 1 && (
+                      <Box
+                        sx={{
+                          position: "absolute",
+                          top: 32,
+                          bottom: 0,
+                          width: "2px",
+                          backgroundColor: "#E5E7EB",
+                        }}
+                      />
+                    )}
+                  </Box>
+
+                  {/* Activity content */}
+                  <Stack spacing={0.5}>
+                    <Typography
+                      sx={{
+                        fontFamily:
+                          "Inter, system-ui, -apple-system, sans-serif",
                         fontSize: "15px",
                       }}
                     >
-                      {item.userId._id === user._id ? "You" : item?.userId.name}
-                    </b>{" "}
-                    {item.message}
-                  </Typography>
+                      <b
+                        style={{
+                          color:
+                            item.userId._id === user._id
+                              ? "rgba(42, 148, 42, 0.78)"
+                              : "rgba(0, 0, 255, 0.69)",
+                          fontSize: "15px",
+                        }}
+                      >
+                        {item.userId._id === user._id
+                          ? "You"
+                          : item?.userId.name}
+                      </b>{" "}
+                      {item.message}
+                    </Typography>
 
-                  <Typography
-                    sx={{
-                      fontSize: "13px",
-                      color: "#8A8F98",
-                      fontFamily: "Inter, system-ui, -apple-system, sans-serif",
-                    }}
-                  >
-                    {/* {activity.date}
+                    <Typography
+                      sx={{
+                        fontSize: "13px",
+                        color: "#8A8F98",
+                        fontFamily:
+                          "Inter, system-ui, -apple-system, sans-serif",
+                      }}
+                    >
+                      {/* {activity.date}
               {"  •  "}
               {activity.time} */}
-                    {formatDate(item.createdAt)}
-                  </Typography>
+                      {formatDate(item.createdAt)}
+                    </Typography>
+                  </Stack>
                 </Stack>
-              </Stack>
-            </Box>
-          ))}
-          {activity.length > 0 && (
-            <Pagination
-              count={totalPages}
-              page={page}
-              onChange={(event, value) => setPage(value)}
-              sx={{ justifySelf: "center", mt: 2 }}
-            />
+              </Box>
+            ))}
+          </Box>
+     
+          <Stack sx={{alignItems:"center"}}>
+             {activity.length > 0 && (
+              <Pagination
+                count={totalPages}
+                page={page}
+                onChange={(event, value) => setPage(value)}
+              />
+         
           )}
+          </Stack>
+         
         </Box>
       ) : (
         <Typography>Loading</Typography>

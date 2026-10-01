@@ -4,7 +4,7 @@ const taskSchema=new mongoose.Schema({
         type:String
     },
     date:{
-        type:String
+        type:Date
     },
     priority:{
         type:String
@@ -41,6 +41,6 @@ const taskSchema=new mongoose.Schema({
       default: null,
     },
 });
-taskSchema.index({projectId:1,status:1,date:1})
+taskSchema.index({date:1})
 const Task=mongoose.model('tasks',taskSchema);
 module.exports=Task;

@@ -23,6 +23,7 @@ import { useSelector } from "react-redux";
 import useAuth from "../../auth";
 import { useParams } from "react-router-dom";
 import AlertDialog from "../AlertDialog";
+import AttachmentUploader from "../AttachmentUploader";
 
 export default function Memberstab({}) {
   const [open, setOpen] = useState(false);
@@ -48,6 +49,7 @@ export default function Memberstab({}) {
     viewer: { bg: "#EAF9EF", text: "#16A34A" },
     // viewer:{bg: }
   };
+
 
   useEffect(() => {
     const getMembers = async () => {
@@ -90,7 +92,7 @@ export default function Memberstab({}) {
               fontFamily: "Inter, system-ui, -apple-system, sans-serif",
             }}
           >
-            View and Manage Members
+         {project?.ownerId._id === user?._id==="owner" ? "View and Manage Members" : "View All Members"  }
           </Typography>
 
           {project?.ownerId._id === user?._id && (
@@ -226,7 +228,8 @@ export default function Memberstab({}) {
                   <TableCell align="left">
                     {row.role !== "owner" ? (
                       <>
-                        <Tooltip title="Edit Role">
+                      {project?.ownerId._id === user?._id ? <>
+                       <Tooltip title="Edit Role">
                           <IconButton
                             size="small"
                             sx={{ color: "rgb(62, 62, 151)" }}
@@ -248,6 +251,8 @@ export default function Memberstab({}) {
                             <DeleteOutlineOutlined fontSize="16px" />
                           </IconButton>
                         </Tooltip>
+                      </> : "Not Allowed"}
+                       
                       </>
                     ): '- -'}
                   </TableCell>
@@ -257,6 +262,7 @@ export default function Memberstab({}) {
           </Table>
         </TableContainer>
       </Box>
+  
       <MembersDialog
         open={open}
         onClose={() => {

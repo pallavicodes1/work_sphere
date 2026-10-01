@@ -3,19 +3,12 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions,
   TextField,
   Button,
-  FormControl,
   MenuItem,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
-  FormLabel,
   Stack,
   Box,
   Typography,
-  Autocomplete,
 } from "@mui/material";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { Controller, useForm } from "react-hook-form";
@@ -23,10 +16,9 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
 import { useSnackbar } from "notistack";
 import useAuth from "../../auth";
-import { addOProject } from "../../app/user/projectSlice";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
 const fieldSx = {
   "& .MuiOutlinedInput-root": {
@@ -66,18 +58,29 @@ const labelSx = {
   fontFamily: "Inter, system-ui, -apple-system, sans-serif",
 };
 
-
-const AddProject = ({ open, onClose,setprojectAsOwner }) => {
+const AddProject = ({ open, onClose, setprojectAsOwner }) => {
   const [users, setUsers] = useState([]);
   const [loadingUsers, setLoadingUsers] = useState(false);
+
+  const [selectedFile, setSelectedFile] = useState(null);
+
+  const handleFileChange = (event) => {
+    if (event.target.files && event.target.files.length > 0) {
+      setSelectedFile(event.target.files[0]);
+    }
+  };
+
   const FormSchema = Yup.object().shape({
     title: Yup.string()
       .trim()
       .required("Title is Required")
       .max(40, "Title should not be more than 40 characters"),
     priority: Yup.string().required("Priority is required"),
-    startDate: Yup.date().nullable().required("Start Date is required"),
-    endDate: Yup.date().nullable().required("End Date is required"),
+    startDate: Yup.date().required("Start date is required"),
+
+    endDate: Yup.date()
+      .required("End date is required")
+      .min(Yup.ref("startDate"), "End date cannot be before start date"),
     members: Yup.array()
       .of(
         Yup.object({
@@ -89,7 +92,7 @@ const AddProject = ({ open, onClose,setprojectAsOwner }) => {
       .trim()
       .required("Description is required")
       .min(100, "Description must be at least 100 characters long")
-      .max(150,"Description must be less than 150 characters"),
+      .max(150, "Description must be less than 150 characters"),
   });
 
   const {
@@ -121,7 +124,7 @@ const AddProject = ({ open, onClose,setprojectAsOwner }) => {
       };
       const result = await request.post("/project", payload);
       if (result.status === 201) {
-        setprojectAsOwner(prev=>[...prev,result?.data?.result])
+        setprojectAsOwner((prev) => [...prev, result?.data?.result]);
       }
     } catch (error) {
       console.log("in catch block");
@@ -337,6 +340,38 @@ const AddProject = ({ open, onClose,setprojectAsOwner }) => {
                 />
               </Box>
 
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: 2,
+                  alignItems: "center",
+                  mt: 4,
+                }}
+              >
+                {/* The visible MUI Button acting as the trigger */}
+                <Button
+                  component="label"
+                  variant="contained"
+                  startIcon={<CloudUploadIcon />}
+                >
+                  Choose File
+                  {/* The visually hidden native file input */}
+                  <input
+                    type="file"
+                    hidden
+                    onChange={handleFileChange}
+                    accept="image/*,.pdf" // Optional: Restrict file types
+                  />
+                </Button>
+
+                {/* Optional: Display the selected file name */}
+                {selectedFile && (
+                  <Typography variant="body2" color="textSecondary">
+                    Selected File: <strong>{selectedFile.name}</strong>
+                  </Typography>
+                )}
+              </Box>
               <Box>
                 <Controller
                   name="description"

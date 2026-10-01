@@ -1,41 +1,17 @@
-import {
-  Card,
-  CardContent,
-  Typography,
-  Box,
-  Chip,
-  Avatar,
-  AvatarGroup,
-  CardActions,
-  Button,
-  Paper,
-  Stack,
-  Slider,
-  IconButton,
-  Menu,
-  MenuItem,
-  ListItemIcon,
-  ListItemText,
-} from "@mui/material";
-import { styled } from "@mui/material/styles";
+import { Card, CardContent, Typography, Box, Chip, Stack } from "@mui/material";
 
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutlineRounded";
 import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
 import FlagOutlinedIcon from "@mui/icons-material/FlagOutlined";
-import { useSelector } from "react-redux";
+
 import { useState } from "react";
-import MoreVertIcon from "@mui/icons-material/MoreVert";
-import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
-import DeleteOutlineIcon from "@mui/icons-material/DeleteOutlineOutlined";
+
 import MenuComponents from "./MenuComponents";
 
-
-
-const ProjectMainContent = ({ owner ,projects,setprojectAsOwner}) => {
+const ProjectMainContent = ({ owner, projects, setprojectAsOwner }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
-   console.log("project component");
-  
+  console.log("project component");
 
   const priorityStyles = {
     low: { bgcolor: "hsla(175, 80%, 50%, 0.2)", color: "hsl(175, 80%, 50%)" },
@@ -109,7 +85,7 @@ const ProjectMainContent = ({ owner ,projects,setprojectAsOwner}) => {
       >
         {projects?.map((project) => (
           <Card
-          key={project?._id}
+            key={project?._id}
             sx={{
               width: 350,
               borderRadius: "14px",
@@ -121,37 +97,44 @@ const ProjectMainContent = ({ owner ,projects,setprojectAsOwner}) => {
               {/* Project name */}
               <Stack direction={"column"} spacing={1.25}>
                 <Stack>
-                     <Stack
-                  direction={"row"}
-                  sx={{ alignItems: "center", justifyContent: "space-between" }}
-                >
-                  {" "}
-                  <Typography
+                  <Stack
+                    direction={"row"}
                     sx={{
-                      fontWeight: 600,
-                      // color: projectTitleColors[index % projectTitleColors.length],
-                      fontSize: "16px",
-                      fontFamily: "Inter, system-ui, -apple-system, sans-serif",
-                      textTransform: "capitalize",
+                      alignItems: "center",
+                      justifyContent: "space-between",
                     }}
                   >
-                    {project.title}
+                    {" "}
+                    <Typography
+                      sx={{
+                        fontWeight: 600,
+                        // color: projectTitleColors[index % projectTitleColors.length],
+                        fontSize: "16px",
+                        fontFamily:
+                          "Inter, system-ui, -apple-system, sans-serif",
+                        textTransform: "capitalize",
+                      }}
+                    >
+                      {project.title}
+                    </Typography>
+                    <Box>
+                      <MenuComponents
+                        owner={owner}
+                        projectId={project._id}
+                        setprojectAsOwner={setprojectAsOwner}
+                      />
+                    </Box>
+                  </Stack>
+                  <Typography
+                    color="text.secondary"
+                    sx={{
+                      fontSize: "14px",
+                      fontFamily: "Inter, system-ui, -apple-system, sans-serif",
+                    }}
+                  >
+                    {project?.description.slice(0, 35)}...
                   </Typography>
-                  <Box>
-               <MenuComponents owner={owner} projectId={project._id} setprojectAsOwner={setprojectAsOwner}/>
-                  </Box>
                 </Stack>
-                <Typography
-                  color="text.secondary"
-                  sx={{
-                    fontSize: "14px",
-                    fontFamily: "Inter, system-ui, -apple-system, sans-serif",
-                  }}
-                >
-                  {project?.description.slice(0,35)}...
-                </Typography>
-                </Stack>
-             
 
                 <Chip
                   icon={<FlagOutlinedIcon />}
@@ -171,26 +154,25 @@ const ProjectMainContent = ({ owner ,projects,setprojectAsOwner}) => {
                     },
                   }}
                 />
-              
-                  <Stack
-                    spacing={0.5}
-                    direction={"row"}
-                    sx={{ alignItems: "center" }}
+
+                <Stack
+                  spacing={0.5}
+                  direction={"row"}
+                  sx={{ alignItems: "center" }}
+                >
+                  <CalendarTodayOutlinedIcon
+                    sx={{ fontSize: "13px", color: "#475569" }}
+                  />
+                  <Typography
+                    sx={{
+                      color: "#475569",
+                      fontSize: "14px",
+                      fontFamily: "Inter, system-ui, -apple-system, sans-serif",
+                    }}
                   >
-                    <CalendarTodayOutlinedIcon
-                      sx={{ fontSize: "13px", color: "#475569" }}
-                    />
-                    <Typography
-                      sx={{
-                        color: "#475569",
-                        fontSize: "14px",
-                        fontFamily:
-                          "Inter, system-ui, -apple-system, sans-serif",
-                      }}
-                    >
-                      {formatDate(project.endDate)}
-                    </Typography>
-                  </Stack> 
+                    {formatDate(project.endDate)}
+                  </Typography>
+                </Stack>
               </Stack>
               {/* Date + Priority */}
 

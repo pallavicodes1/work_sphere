@@ -1,13 +1,12 @@
-import { Children, useEffect, useState } from "react";
+import {useEffect } from "react";
 import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions,
-  TextField,
+
   Button,
   FormControl,
-  MenuItem,
+
   RadioGroup,
   FormControlLabel,
   Radio,
@@ -17,15 +16,12 @@ import {
   Typography,
   IconButton,
 } from "@mui/material";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import Avatar from "@mui/material/Avatar";
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
-import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import CloseIcon from "@mui/icons-material/Close";
-import CustomAutoComplete from "./CustomAutoComplete";
+import CustomAutoComplete from "../CustomAutoComplete";
 import { useSnackbar } from "notistack";
 import useAuth from "../../auth";
 
@@ -50,7 +46,7 @@ const labelSx = {
 };
 
 const MembersDialog = ({ open, onClose, member, setMembers }) => {
-  const [selectedmember, setSelectedmember] = useState(null);
+  
   const { projectId } = useParams();
   const { enqueueSnackbar } = useSnackbar();
   const { request } = useAuth();
@@ -97,7 +93,7 @@ const MembersDialog = ({ open, onClose, member, setMembers }) => {
   const editMember = async (data) => {
     console.log(data);
     try {
-      const result = await request.patch(`/member/${member._id}`,{ role:data.role});
+      const result = await request.patch(`/project/${projectId}/member/${member._id}`,{ role:data.role});
       if(result.status===200){
         setMembers(prev=>prev.map((m)=>{
           if(m._id===member._id) return result.data.data
@@ -108,6 +104,7 @@ const MembersDialog = ({ open, onClose, member, setMembers }) => {
       })
       }
     } catch (error) {
+      console.log(error);
       enqueueSnackbar(error.response.data.message,{
         variant:"error"
       })
@@ -181,10 +178,8 @@ const MembersDialog = ({ open, onClose, member, setMembers }) => {
                   <Typography sx={labelSx}>Member</Typography>
                   <CustomAutoComplete
                     member={member}
-                    onMemberSelect={(member) => {
-                      setSelectedmember(member);
-                    }}
                     control={control}
+                    taskAssignment={false}
                   />
                 </Box>
               )}
@@ -213,7 +208,6 @@ const MembersDialog = ({ open, onClose, member, setMembers }) => {
                       >
                         Role
                       </FormLabel>
-
                       <RadioGroup
                         row
                         sx={{ ml: 1 }}

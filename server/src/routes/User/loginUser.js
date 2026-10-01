@@ -10,7 +10,7 @@ const loginUser = async (req, res) => {
       { email,
         isDeleted:false
        }
-    ).select("password");
+    ).select("name email contact lname password");
     if (!user) {
       return res.status(404).json({
         message: "User Not Found",
@@ -50,7 +50,8 @@ const loginUser = async (req, res) => {
       sameSite: "lax",
     });
     res.status(200).json({
-      success: true
+      success: true,
+      user
       // tasks: taskData,
       // projectsAsOwner:projectsAsOwnerData,   
       // projectAsMembers:projectAsmembers

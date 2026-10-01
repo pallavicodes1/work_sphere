@@ -20,74 +20,78 @@ const getOverview= async function(req, res) {
       0, 0, 0, 0
     )
 
-    const startOfTodayUTC = new Date(startOfTodayIST.getTime() - (5.5 * 60 * 60 * 1000));
+    // const startOfTodayUTC = new Date(startOfTodayIST.getTime() - (5.5 * 60 * 60 * 1000));
 
+
+    // console.log(startOfTodayIST);
+    //     console.log(startOfTodayUTC);
     const todayStr = new Date().toISOString().split('T')[0];
 
     // Run independent queries in parallel
-    const [taskAgg, members, activities] = await Promise.all([
-      Task.aggregate([
-        { $match: { project: projectObjectId } },
-        {
-          $group: {
-            _id: null,
-            total: { $sum: 1 },
+   const [taskAgg, members, activities] = await Promise.all([
+  Task.aggregate([
+    {
+      $match: {
+        project: projectObjectId,
+        isDeleted: false
+      }
+    },
+    {
+      $group: {
+        _id: null,
 
-            pending: {
-              $sum: {
-                $cond: [{ $eq: ['$status', 'pending'] }, 1, 0]
-              }
-            },
+        total: { $sum: 1 },
 
-            inProgress: {
-              $sum: {
-                $cond: [{ $eq: ['$status', 'in-progress'] }, 1, 0]
-              }
-            },
-
-            completed: {
-              $sum: {
-                $cond: [{ $eq: ['$status', 'completed'] }, 1, 0]
-              }
-            },
-
-            overdue: {
-              $sum: {
-                $cond: [
-                  {
-                    $and: [
-                      {
-                        $lt: ['$date', startOfTodayUTC]
-                      },
-                      { $ne: ['$status', 'completed'] }
-                    ]
-                  },
-                  1,
-                  0
-                ]
-              }
-            }
+        pending: {
+          $sum: {
+            $cond: [{ $eq: ['$status', 'pending'] }, 1, 0]
           }
         },
-        {
-          $project: { _id: 0 }
+
+        inProgress: {
+          $sum: {
+            $cond: [{ $eq: ['$status', 'in-progress'] }, 1, 0]
+          }
+        },
+
+        completed: {
+          $sum: {
+            $cond: [{ $eq: ['$status', 'completed'] }, 1, 0]
+          }
+        },
+
+        overdue: {
+          $sum: {
+            $cond: [
+              {
+                $and: [
+                  { $lt: ['$date', startOfTodayIST] },
+                  { $ne: ['$status', 'completed'] }
+                ]
+              },
+              1,
+              0
+            ]
+          }
         }
-      ]),
+      }
+    },
+    {
+      $project: { _id: 0 }
+    }
+  ]),
 
-      //   Only first 4 members for overview
-      ProjectMember.find({ projectId: projectObjectId })
-        .limit(4)
-        .populate('userId', 'name email'),
+  // Only first 4 members for overview
+  ProjectMember.find({ projectId: projectObjectId })
+    .limit(4)
+    .populate('userId', 'name email'),
 
-       Activity.find({ projectId: projectObjectId  })
-        .select("type message userId createdAt")
-        .populate("userId", "name")
-        .limit(4)
-        .sort({createdAt:-1}),
-
-
-    ]);
-
+  Activity.find({ projectId: projectObjectId })
+    .select('type message userId createdAt')
+    .populate('userId', 'name')
+    .limit(4)
+    .sort({ createdAt: -1 })
+]);
     const taskSummary = taskAgg[0] || {
       total: 0,
       pending: 0,

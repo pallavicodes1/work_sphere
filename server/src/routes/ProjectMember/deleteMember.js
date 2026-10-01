@@ -1,7 +1,6 @@
-import ProjectMember from "../../models/projectmember.js"
-import createActivity from "../RecentActivity/createActivity.js";
-
-export default async function (req, res) {
+const ProjectMember = require("../../models/projectmember");
+const createActivity = require("../RecentActivity/createActivity");
+const deleteMember= async function (req, res) {
     try {
         const id = req.params.id;
         const projectMember = await ProjectMember.findByIdAndDelete(id)
@@ -17,9 +16,11 @@ export default async function (req, res) {
             message: "Member Removed Successfully!"
         })
     } catch (error) {
+        console.log(error)
         return res.status(500).json({
             error: `Server Error - ${error}`
         })
     }
 
 }
+module.exports=deleteMember;

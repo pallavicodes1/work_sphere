@@ -4,7 +4,7 @@ import CalendarTodayIcon from "@mui/icons-material/CalendarTodayRounded";
 import { useSelector } from "react-redux";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import { Link } from "react-router-dom";
+
 
 function UpcomingTasks() {
   const tasks = useSelector((state) => state.taskReducer.task);
@@ -18,7 +18,7 @@ function UpcomingTasks() {
   endDate.setDate(endDate.getDate() + 7);
   endDate.setHours(23, 59, 59, 999);
 
-  const upcomingTasks = tasks.filter((task) => {
+  const upcomingTasks = tasks?.filter((task) => {
     const taskDate = new Date(task.date);
 
     return taskDate >= startDate && taskDate <= endDate;
@@ -47,7 +47,7 @@ function UpcomingTasks() {
                 Upcoming Tasks
               </Typography>     
             </Stack>
-      {upcomingTasks.length === 0 ? (
+      {upcomingTasks?.length === 0 ? (
         <Stack
           spacing={1}
           sx={{
@@ -79,7 +79,7 @@ function UpcomingTasks() {
         </Stack>
       ) : (
         <Stack direction={"column"}>
-          {upcomingTasks.slice(0, 5).map((task) => {
+          {upcomingTasks?.slice(0, 5).map((task) => {
             const shortDescription = task?.description
               .split(/\s+/)
               .slice(0, 8)

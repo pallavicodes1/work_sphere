@@ -2,7 +2,8 @@ import { createSlice } from "@reduxjs/toolkit";
 export const currentProjectSlice = createSlice({
   name: "currentProjectReducer",
   initialState: {
-   data:null
+   data:null,
+   currentUserRole:null
   },
   reducers: {
     addCurrentProject: (state, action) => {
@@ -11,13 +12,20 @@ export const currentProjectSlice = createSlice({
     removeCurrentProject: (state, action) => {
       state.data=null;
     },
-   
+    addUserProjectRole: (state, action) => {
+      state.currentUserRole = action.payload;
+    },
+    removeUserProjectRole: (state, action) => {
+      state.currentUserRole = null;
+    },
   },
 });
 // Action creators
 export const {
     addCurrentProject,
-    removeCurrentProject
+    removeCurrentProject,
+    addUserProjectRole,
+    removeUserProjectRole
 
 } = currentProjectSlice.actions;
 export default currentProjectSlice.reducer;

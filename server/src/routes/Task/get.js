@@ -25,7 +25,7 @@ const get =async(req,res)=>{
     }
     else {
        
-        const result=await Task.find({userId:req?.user?._id,isDeleted:false});
+      const result=await Task.find({userId:req?.user?._id,isDeleted:false});
        return  res.send(result);
     }
 

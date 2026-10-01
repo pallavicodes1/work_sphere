@@ -6,7 +6,8 @@ const getOverview = require('./getOverview');
 const  getTasks = require('./getTasks');
 const deleteProject  = require('./deleteProject');
 const activityRouter=require('./Activity/index');
-const memberRouter=require('./Member/index')
+const memberRouter=require('./Member/index');
+const attachmentRouter=require('./Attachments/index')
 const patch = require('./patch');
 const router=express.Router();
 router.post('/',post);
@@ -18,4 +19,5 @@ router.delete('/:id',deleteProject);
 router.patch('/:id',patch);
 router.use('/:id/member',memberRouter)
 router.use('/:id/activity',activityRouter);
+router.use('/:id/attachments',attachmentRouter)
 module.exports=router;

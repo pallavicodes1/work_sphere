@@ -78,7 +78,7 @@ console.log(overdueTasks)
     },
     {
       label: "In Progress",
-      value: inprogressTasks.length,
+      value: inprogressTasks?.length,
       icon: <TimelapseIcon />,
       iconBg: "#fef3c7",
       iconColor: "#d97706",
@@ -100,7 +100,7 @@ console.log(overdueTasks)
   ];
   return (
     <>
-      <Box sx={{ px: { xs: 2, md: 5 }, flex: 1,minHeight:"38vw"}}>
+      <Box sx={{ px: { xs: 2, md: 5 }, flex: 1}}>
         <Typography
           sx={{
             fontSize: "22px",

@@ -16,7 +16,7 @@ import * as Yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { useSnackbar } from "notistack";
 import useAuth from "../../auth";
-import { userLogin } from "../../app/user/userSlice";
+import { userLogin } from "../../App/user/userSlice";
 
 const fieldSx = {
   "& .MuiOutlinedInput-root": {
@@ -96,7 +96,7 @@ function PersonalInfo() {
           variant:"success"
         })
       }
-    } catch (err) {
+    }catch (err) {
       enqueueSnackbar(err?.response?.data?.message,{
           variant:"error"
         })

@@ -1,6 +1,6 @@
-import ProjectMember from "../../models/projectmember.js";
+const ProjectMember = require("../../models/projectmember");
 
-export default async function(req,res){
+const patch= async function(req,res){
     const id=req.params.id;
     // console.log(req.body)
    const data= await ProjectMember.findByIdAndUpdate(id,{
@@ -11,3 +11,4 @@ export default async function(req,res){
         message:"Role Updated Successfully"
     })
 }
+module.exports=patch;
