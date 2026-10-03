@@ -25,12 +25,12 @@ const postUser = async (req, res) => {
   });
 
   // to send email
-  await sendEmail({
-    name: req?.body?.name,
-    to: req?.body?.email,
-    subject: "Welcome to the family!",
-    purpose:"signUp"
-  });
+//   await sendEmail({
+//   to: user.email,
+//   purpose: "signUp",
+//   data: { name: user.name },
+// });
+
   return res.status(201).json({
      message:"Account Created Successfully, You can login into your account"
   });

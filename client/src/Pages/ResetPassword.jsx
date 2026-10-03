@@ -17,6 +17,7 @@ import { Controller, useForm } from "react-hook-form";
 import * as Yup from "yup";
 import useAuth from "../auth";
 import { useSnackbar } from "notistack";
+import { useDispatch } from "react-redux";
 
 const fieldSx = {
   "& .MuiOutlinedInput-root": {
