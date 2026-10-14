@@ -2,16 +2,19 @@ import { useEffect, useState } from "react";
 import {
   Box,
 } from "@mui/material";
-import  DashboardSidebar  from "./DashboardSlider";
 import { useDispatch } from "react-redux";
 import NavBar from "./NavBar";
 import { Outlet } from "react-router-dom";
 import useAuth from "../../auth";
 import { userTask } from "../../app/user/taskSlice";
-import { userLogin } from "../../App/user/userSlice";
+import { userLogin } from "../../app/user/userSlice";
+import Sidebar from "./Sidebar";
 
-export default function DashboardPage({activeSection,onSectionChange,children}) {
+
+
+export default function Layout({}) {
   const [collapsed, setCollapsed] = useState(false);
+  const [activeSection,setActiveSection]=useState("dashboard");
   const {request} = useAuth();
   const dispatch=useDispatch();
   const getDashBoardDetails=async(req,res)=>{
@@ -30,6 +33,12 @@ export default function DashboardPage({activeSection,onSectionChange,children}) 
   useEffect(()=>{
     getDashBoardDetails();
   })
+
+
+  const onSectionChange=(section)=>{
+    setActiveSection(section);
+  }
+
   return (
     <Box sx={{ 
       display: "flex", 
@@ -37,7 +46,7 @@ export default function DashboardPage({activeSection,onSectionChange,children}) 
       bgcolor: "#b5c4e321" ,
       flexDirection:"row",
       }}>
-      <DashboardSidebar
+      <Sidebar
         activeSection={activeSection}
         onSectionChange={onSectionChange}
         collapsed={collapsed}

@@ -1,15 +1,8 @@
-import { useState } from "react";
-import { Box, Stack, Typography, IconButton, Paper, Chip } from "@mui/material";
+import { Box, Stack, Typography, Paper } from "@mui/material";
 import CheckBoxOutlinedIcon from "@mui/icons-material/CheckBoxOutlined";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
 import WarningAmberIcon from "@mui/icons-material/WarningAmberRounded";
 import TimelapseIcon from "@mui/icons-material/AccessTimeRounded";
-import GraphicEqIcon from "@mui/icons-material/GraphicEqRounded";
-import FolderOpenIcon from "@mui/icons-material/FolderOpenRounded";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import PeopleOutlineIcon from "@mui/icons-material/PeopleOutlineRounded";
-import AssignmentOutlinedIcon from "@mui/icons-material/AssignmentOutlined";
-import ViewModuleRoundedIcon from "@mui/icons-material/ViewModuleRounded";
 import { useSelector } from "react-redux";
 import UpcomingTasks from "./UpcomingTasks";
 import TodayTasks from "./TodayTasks";
@@ -184,12 +177,8 @@ console.log(overdueTasks)
             gap: 2.5,
             mt: 3,
           }}
-        >
-         
-           
-           
+        >  
         <UpcomingTasks/>
-
        <TodayTasks/>
         </Box>
 

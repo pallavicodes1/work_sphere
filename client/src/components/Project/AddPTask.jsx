@@ -31,7 +31,8 @@ const AddPTask = ({ open, onClose, task, setTasks, members }) => {
     title: Yup.string().required("Title is Required").max(20, "Title should not be more than 20 characters"),
     priority: Yup.string().required("Priority is required"),
     date: Yup.date().nullable().required("Date is required"),
-    description: Yup.string().trim().required("Description is required").min(20, "Description must be at least 30 characters long"),
+    description: Yup.string().trim().required("Description is required")  .min(50, "Description must be at least 50 characters long")
+      .max(100,"Description must not exceed 100 characters"),
     status: isEdit ? Yup.string().nullable() : Yup.string(),
     assignedTo: isEdit ? Yup.string().required("This field is required") : Yup.string().nullable(),
   });

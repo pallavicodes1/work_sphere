@@ -24,7 +24,6 @@ function UpcomingTasks() {
     return taskDate >= startDate && taskDate <= endDate;
   });
 
-  console.log(upcomingTasks);
   return (
           <Paper
             variant="outlined"

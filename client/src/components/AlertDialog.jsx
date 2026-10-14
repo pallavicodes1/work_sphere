@@ -16,6 +16,7 @@ import { removeCurrentProject } from "../app/user/currentProjectSlice";
 
 export default function AlertDialog({
   data,
+  setTasks,
   open,
   setOpen,
   setData,
@@ -27,6 +28,7 @@ export default function AlertDialog({
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const handleClose = () => {
+
     setOpen(false);
   };
   const { enqueueSnackbar } = useSnackbar();
@@ -34,11 +36,11 @@ export default function AlertDialog({
     try {
       if (data === "task") {
         const data = await request.delete(`/task/${toDelete}`);
-        if (data.status === 200) {
+        if (data?.status === 200) {
           enqueueSnackbar(data?.data?.message, {
             variant: "success",
           });
-          setData((prev) => prev.filter((t) => t._id !== toDelete));
+          setTasks((prev) => prev.filter((t) => t._id !== toDelete));
         }
         setToDelete(null);
       } else if (data === "project") {
@@ -70,10 +72,11 @@ export default function AlertDialog({
 
         navigate("/");
       }
-    } catch (error) {
-      enqueueSnackbar(error?.response?.data?.message, {
-        variant: "error",
-      });
+    } catch(error) {
+      //   enqueueSnackbar(error?.response?.data?.message, {
+      //   variant: "error",
+      // });
+    
     }
     handleClose();
   };

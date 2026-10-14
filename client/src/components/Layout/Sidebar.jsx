@@ -4,21 +4,14 @@ import {
   Stack,
   Typography,
   Button,
-  IconButton,
-  Collapse,
   Tooltip,
 } from "@mui/material";
 import DashboardIcon from "@mui/icons-material/GridViewRounded";
 import TaskIcon from "@mui/icons-material/CheckBoxOutlined";
 import ProfileIcon from "@mui/icons-material/PersonOutlineRounded";
-import AddIcon from "@mui/icons-material/Add";
 import LogoutIcon from "@mui/icons-material/LogoutRounded";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
-import ExpandLessIcon from "@mui/icons-material/ExpandLess";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import DragIndicatorIcon from "@mui/icons-material/DragIndicator";
-import { userLogout } from "../../App/user/userSlice";
 import { useLocation, useNavigate } from "react-router-dom";
 import useAuth from "../../auth";
 import { useDispatch } from "react-redux";
@@ -26,6 +19,7 @@ import ProjectIcon from "@mui/icons-material/FolderOpen"
 import { removeUserTask } from "../../app/user/taskSlice";
 import { removeOProjects } from "../../app/user/projectSlice";
 import { removeCurrentProject } from "../../app/user/currentProjectSlice";
+import { userLogout } from "../../app/user/userSlice";
 
 const EXPANDED = 260;
 const COLLAPSED = 76;
@@ -38,7 +32,7 @@ const navItems = [
 const projectItems = [
   { key: "projects", label: "Projects", icon: ProjectIcon },
 ];
-function DashboardSidebar({
+function Sidebar({
   activeSection,
   onSectionChange,
   collapsed,
@@ -126,7 +120,10 @@ function DashboardSidebar({
               >
                 <Button
                   disableRipple
-                  onClick={() => navigate(`/app/${item?.key}`)}
+                  onClick={() => {
+                    onSectionChange(item.key)
+                    navigate(`/app/${item?.key}`)
+                  }}
                   startIcon={
                     !collapsed ? <Icon sx={{ fontSize: "14px" }} /> : undefined
                   }
@@ -180,7 +177,10 @@ function DashboardSidebar({
               >
                 <Button
                   disableRipple
-                  onClick={() => navigate('/app/projects')}
+                  onClick={() => {
+                    onSectionChange(item.key)
+                    navigate('/app/projects')
+                  }}
                   startIcon={
                     !collapsed ? <Icon sx={{ fontSize: "13px" }} /> : undefined
                   }
@@ -261,4 +261,4 @@ function DashboardSidebar({
   );
 }
 
-export default DashboardSidebar;
+export default Sidebar;

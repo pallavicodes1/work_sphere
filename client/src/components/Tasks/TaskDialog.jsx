@@ -1,9 +1,10 @@
+// imports
 import { useEffect } from "react";
 import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions,
+
   TextField,
   Button,
   FormControl,
@@ -22,11 +23,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import useAuth from "../../auth";
-import { useDispatch } from "react-redux";
-
-import { Link } from "react-router-dom";
 import { useSnackbar } from "notistack";
-import { addTask, updateTask } from "../../app/user/taskSlice";
+
 
 const fieldSx = {
   "& .MuiOutlinedInput-root": {
@@ -66,13 +64,13 @@ const labelSx = {
   fontFamily: "Inter, system-ui, -apple-system, sans-serif",
 };
 
-const TaskDialog = ({ open, onClose, task }) => {
+const TaskDialog = ({ open, onClose, task, setTasks }) => {
   const isEdit = Boolean(task);
   const FormSchema = Yup.object().shape({
     title: Yup.string()
       .required("Title is Required")
       .trim()
-      .min(10,"Title must be at least 10 characters long")
+      .min(10, "Title must be at least 10 characters long")
       .max(30, "Title must not exceed 30 characters"),
     priority: Yup.string().required("Priority is required"),
     date: Yup.date().nullable().required("Date is required"),
@@ -80,7 +78,7 @@ const TaskDialog = ({ open, onClose, task }) => {
       .trim()
       .required("Description is required")
       .min(50, "Description must be at least 50 characters long")
-      .max(100,"Description must not exceed 100 characters"),
+      .max(100, "Description must not exceed 100 characters"),
     status: isEdit ? Yup.string().nullable() : Yup.string(),
   });
 
@@ -102,8 +100,7 @@ const TaskDialog = ({ open, onClose, task }) => {
   });
 
   const { request } = useAuth();
-  const dispatch = useDispatch();
-
+  const { enqueueSnackbar } = useSnackbar();
   const updateTaskfunc = async (dataToSend) => {
     try {
       const updatedTask = {
@@ -111,20 +108,23 @@ const TaskDialog = ({ open, onClose, task }) => {
         ...dataToSend,
       };
 
-      const result = await request.patch(
-        `/task/update/${task?._id}`,
-        updatedTask,
-      );
+      const result = await request.patch(`/task/${task?._id}`, updatedTask);
 
       if (result?.status === 200) {
-        dispatch(updateTask(result?.data?.updatedTask));
+        setTasks((prevTasks) =>
+          prevTasks.map((task) =>
+            task._id === result.data.updatedTask._id
+              ? result.data.updatedTask
+              : task,
+          ),
+        );
         enqueueSnackbar(result?.data?.message, {
           variant: "success",
         });
       }
     } catch (error) {
       if (error.response) {
-        enqueueSnackbar(error.response.data.message, {
+        enqueueSnackbar(error?.response?.data?.message, {
           variant: "error",
         });
       }
@@ -132,7 +132,7 @@ const TaskDialog = ({ open, onClose, task }) => {
 
     onClose();
   };
-  const { enqueueSnackbar } = useSnackbar();
+
   const addTaskfunc = async (dataToSend) => {
     try {
       const res = await request.post("/task", dataToSend);
@@ -140,7 +140,7 @@ const TaskDialog = ({ open, onClose, task }) => {
         enqueueSnackbar(res?.data?.message, {
           variant: "success",
         });
-        dispatch(addTask(res?.data?.task));
+        setTasks((prev) => [...prev, res.data.task]);
       }
     } catch (error) {
       if (error.response) {
@@ -166,8 +166,8 @@ const TaskDialog = ({ open, onClose, task }) => {
       await updateTaskfunc(dataToSend);
     }
   };
+
   useEffect(() => {
-    console.log(task)
     if (task) {
       reset({
         title: task.title,
@@ -185,7 +185,7 @@ const TaskDialog = ({ open, onClose, task }) => {
       });
     }
   }, [task, reset]);
- 
+
   return (
     <Dialog
       open={open}

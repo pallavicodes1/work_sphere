@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+// imports
+import { useEffect, useMemo, useState } from "react";
 import {
   Box,
   Stack,
@@ -6,55 +7,43 @@ import {
   Button,
   TextField,
   InputAdornment,
-
+   Paper,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-
 import SearchIcon from "@mui/icons-material/Search";
-
 import TaskDialog from "./TaskDialog";
-import { useSelector } from "react-redux";
 import TaskList from "./TaskList";
+import useAuth from "../../auth";
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutlineRounded";
 
 
+
+// component
 function TasksPage() {
- 
-  const [task, setTask] = useState(null);
+  const [tasks,setTasks]=useState([]);
   const [open, setOpen] = useState(false);
-  const [sortBy, setSortBy] = useState("date");
   const [search, setSearch] = useState("");
-  const [filter, setFilter] = useState("all");
-  const [sortDir, setSortDir] = useState("asc");
-  const tasks = useSelector((state) => state.taskReducer.task);
+  const {request}=useAuth();
   const today = new Date().toISOString().split("T")[0];
   const handleAddTask = () => {
     setOpen(true);
   };
-  const priorityRank = {
-    high: 1,
-    medium: 2,
-    low: 3,
-  };
-
   const filteredTasks = useMemo(() => {
     let list = tasks;
-    if (filter !== "all") {
-      if (filter === "overdue") list = list.filter((t) => t.date < today);
-      else list = list.filter((t) => t.priority === filter);
-    }
     const q = search.trim().toLowerCase();
     if (q) list = list?.filter((t) => t.title.toLowerCase().includes(q));
-    const sorted = [...list].sort((a, b) => {
-      let cmp = 0;
-      if (sortBy === "date") {
-        cmp = a.date.localeCompare(b.date);
-      } else {
-        cmp = priorityRank[a.priority] - priorityRank[b.priority];
+    return list;
+  }, [tasks ,search]);
+
+
+  useEffect(()=>{
+      const taskData=async()=>{
+          const res=await request.get('/task');
+          setTasks(res.data.tasks)
       }
-      return sortDir === "asc" ? cmp : -cmp;
-    });
-    return sorted;
-  }, [tasks, filter, today, search, sortBy, sortDir]);
+      taskData();
+  },[])
+
 
   return (
     <>
@@ -115,7 +104,57 @@ function TasksPage() {
           </Button>
         </Box>
 
-    
+           {tasks?.length === 0 ? (
+        <Paper
+          variant="outlined"
+          sx={{
+            mt: 3,
+            borderRadius: "14px",
+            borderColor: "#e5e7eb",
+            py: 8,
+            display: "grid",
+            placeItems: "center",
+          }}
+        >
+          <Stack spacing={0.5} sx={{ alignItems: "center" }}>
+            <Box
+              sx={{
+                width: 50,
+                height: 50,
+                borderRadius: "50%",
+                bgcolor: "#dcfce7",
+                display: "grid",
+                placeItems: "center",
+              }}
+            >
+          <CheckCircleOutlineIcon
+                sx={{ fontSize: "28px", color: "#16a34a" }}
+              />
+            </Box>
+            <Typography
+              sx={{
+                fontSize: "18px",
+                fontWeight: 700,
+                color: "#0f172a",
+                fontFamily: "Inter, system-ui, -apple-system, sans-serif",
+              }}
+            >
+              All caught up!
+            </Typography>
+            <Typography
+              sx={{
+                fontSize: "14px",
+                color: "#64748b",
+                fontFamily: "Inter, system-ui, -apple-system, sans-serif",
+              }}
+            >
+              You have no active tasks
+            </Typography>
+          </Stack>
+        </Paper>
+      ) : null}
+
+
         <Stack
           direction={{ xs: "column", sm: "row" }}
           spacing={1.5}
@@ -154,10 +193,10 @@ function TasksPage() {
        
         </Stack>
 
-     
-        <TaskList tasks={filteredTasks} today={today} />
+
+        <TaskList tasks={filteredTasks} today={today} setTasks={setTasks}/>
       </Box>
-      <TaskDialog open={open} onClose={() => setOpen(false)} task={task} />
+      <TaskDialog open={open} onClose={() => setOpen(false)}  setTasks={setTasks} />
     </>
   );
 }

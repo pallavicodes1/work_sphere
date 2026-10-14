@@ -3,13 +3,10 @@ import Home from "./Pages/Home";
 import { useEffect, useState } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import NotFound from "./components/NotFound";
-import { Snackbar } from "@mui/material";
 import { SnackbarProvider } from "notistack";
 import PrivateRoute from "./components/PrivateRoute";
 import ForgotPassword from "./Pages/ForgotPassword";
 import ResetPassword from "./Pages/ResetPassword";
-import Tasks from "./Pages/Tasks";
-import DashboardPage from "./components/dashboard/Dashboard";
 import MainContent from "./components/dashboard/MainContent";
 import ProfileSection from "./components/Profile/ProfileSection";
 import TasksPage from "./components/Tasks/Tasks";
@@ -21,8 +18,12 @@ import { useDispatch } from "react-redux";
 import { removeUserTask } from "./app/user/taskSlice";
 import { removeOProjects } from "./app/user/projectSlice";
 import { removeCurrentProject } from "./app/user/currentProjectSlice";
-import { userLogout } from "./App/user/userSlice";
-import QuickAdd from "./components/QuickAdd";
+import { userLogout } from "./app/user/userSlice";
+import Layout from "./components/Layout/Layout";
+
+
+
+
 function App() {
   const [collapse, setCollapse] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);
@@ -36,7 +37,6 @@ const {request}=useAuth();
 const dispatch=useDispatch();
 
  useEffect(() => {
-
     const verifyUser = async () => {
       try {
         await request.get("/auth");
@@ -46,7 +46,6 @@ const dispatch=useDispatch();
          dispatch(removeUserTask()); 
          dispatch(removeOProjects())
       }finally {
-
       setCheckingAuth(false);
 
     }
@@ -84,7 +83,7 @@ const dispatch=useDispatch();
             <Route path="/reset-password/:token" element={<ResetPassword />} />
             {/* Protected Routes */}
             <Route element={<PrivateRoute />}>
-              <Route path="/app" element={<DashboardPage />}>
+              <Route path="/app" element={<Layout />}>
                 <Route index element={<Navigate to="dashboard" replace />} />
                 <Route path="dashboard" element={<MainContent />} />
                 <Route path="profile" element={<ProfileSection />} />
