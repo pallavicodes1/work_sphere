@@ -10,7 +10,7 @@ const forgotPassword=async function (req, res) {
     if (!user) {
       return res.status(200).json({
         success:false,
-        message: "User do not exist",
+        message: "User not found",
       });
     }
     const resetToken = crypto.randomBytes(32).toString("hex");

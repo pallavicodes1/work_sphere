@@ -7,12 +7,13 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import useAuth from "../auth";
 import { useDispatch } from "react-redux";
-import { userLogout } from "../app/user/userSlice";
+
 import { useSnackbar } from "notistack";
 import { useNavigate } from "react-router-dom";
 import { removeUserTask } from "../app/user/taskSlice";
 import { removeOProjects } from "../app/user/projectSlice";
 import { removeCurrentProject } from "../app/user/currentProjectSlice";
+import { userLogout } from "../App/user/userSlice";
 
 export default function AlertDialog({
   data,

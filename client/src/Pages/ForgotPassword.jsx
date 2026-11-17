@@ -11,7 +11,7 @@ import {
   InputAdornment,
   IconButton,
 } from "@mui/material";
-import { Link, useNavigate } from "react-router-dom";
+import { Link} from "react-router-dom";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { Controller, useForm } from "react-hook-form";
 import * as Yup from "yup";
@@ -76,8 +76,6 @@ export default function ForgotPassword() {
 
   const { request } = useAuth();
   const { enqueueSnackbar } = useSnackbar();
-  const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const onSubmit =  async(data) => {
     try {

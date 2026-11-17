@@ -10,7 +10,7 @@ export default function TodayTasks() {
   startDate.setHours(0, 0, 0, 0);
   const endDate = new Date(today);
   endDate.setHours(23, 59, 59, 999);
-  const TodayTasks = tasks.filter((task) => {
+  const TodayTasks = tasks?.filter((task) => {
     const taskDate = new Date(task?.date);
     return taskDate >= startDate && taskDate <= endDate;
   });
